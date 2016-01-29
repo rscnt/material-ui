@@ -1,4 +1,6 @@
 import React from 'react';
+import warning from 'warning';
+import DateTime from '../utils/date-time.js';
 import StylePropable from '../mixins/style-propable';
 import WindowListenable from '../mixins/window-listenable';
 import TimePickerDialog from './time-picker-dialog';
@@ -80,6 +82,11 @@ const TimePicker = React.createClass({
     textFieldStyle: React.PropTypes.object,
 
     /**
+     * Sets the time for the Time Picker programmatically.
+     */
+    value: React.PropTypes.object,
+
+    /**
      * Wordings used inside the button of the dialog.
      */
     wordings: React.PropTypes.object,
@@ -103,51 +110,83 @@ const TimePicker = React.createClass({
 
   getInitialState() {
     return {
-      time: this.props.defaultTime || emptyTime,
+      time: this._isControlled() ? this._getControlledTime() : this.props.defaultTime,
       dialogTime: new Date(),
       muiTheme: this.context.muiTheme || getMuiTheme(),
     };
+  },
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    const newState = this.state;
+    if (nextContext.muiTheme) {
+      newState.muiTheme = nextContext.muiTheme;
+    }
+    if (this._isControlled()) {
+      let newTime = this._getControlledTime(nextProps);
+      if (!DateTime.isEqualTime(newTime, this.state.time)) {
+        newState.time = newTime;
+      }
+    }
+    this.setState(newState);
   },
 
   windowListeners: {
     'keyup': '_handleWindowKeyUp',
   },
 
-  formatTime(date) {
-    let hours = date.getHours();
-    let mins = date.getMinutes().toString();
+  formatTime(date, format = 'ampm', pedantic = false) {
+    let result = '';
+    if (date) {
+      let hours = date.getHours();
+      let mins = date.getMinutes().toString();
 
-    if (this.props.format === 'ampm') {
-      let isAM = hours < 12;
-      hours = hours % 12;
-      let additional = isAM ? ' am' : ' pm';
-      hours = (hours || 12).toString();
+      if (format === 'ampm') {
+        let isAM = hours < 12;
+        hours = hours % 12;
+        let additional = isAM ? ' am' : ' pm';
+        hours = (hours || 12).toString();
 
-      if (mins.length < 2 ) mins = '0' + mins;
+        if (mins.length < 2 ) mins = '0' + mins;
 
-      if (this.props.pedantic) {
-        // Treat midday/midnight specially http://www.nist.gov/pml/div688/times.cfm
-        if (hours === '12' && mins === '00') {
-          return additional === ' pm' ? '12 noon' : '12 midnight';
+        if (pedantic) {
+          // Treat midday/midnight specially http://www.nist.gov/pml/div688/times.cfm
+          if (hours === '12' && mins === '00') {
+            return additional === ' pm' ? '12 noon' : '12 midnight';
+          }
         }
+
+        return hours + (mins === '00' ? '' : ':' + mins) + additional;
       }
 
-      return hours + (mins === '00' ? '' : ':' + mins) + additional;
+      hours = hours.toString();
+
+      if (hours.length < 2) hours = '0' + hours;
+      if (mins.length < 2) mins = '0' + mins;
+
+      result = hours + ':' + mins;
     }
-
-    hours = hours.toString();
-
-    if (hours.length < 2) hours = '0' + hours;
-    if (mins.length < 2) mins = '0' + mins;
-
-    return hours + ':' + mins;
+    return result;
   },
 
+  /**
+   * Deprecated.
+   * returns timepicker value.
+   **/
   getTime() {
+    warning(false, `getTime() method is deprecated. Use the defaultTime property
+    instead. Or use the TimePicker as a controlled component with the value
+    property.`);
     return this.state.time;
   },
 
+  /**
+   * Deprecated
+   * sets timepicker value.
+   **/
   setTime(time) {
+    warning(false, `setTime() method is deprecated. Use the defaultTime property
+    instead. Or use the TimePicker as a controlled component with the value
+    property.`);
     this.setState({time: time ? time : emptyTime});
   },
 
@@ -159,15 +198,19 @@ const TimePicker = React.createClass({
   },
 
   openDialog() {
-    this.setState({
-      dialogTime: this.getTime(),
-    });
+    if (this.state.time) {
+      this.setState({
+        dialogTime: this.state.time,
+      });
+    }
 
     this.refs.dialogWindow.show();
   },
 
   _handleDialogAccept(t) {
-    this.setTime(t);
+    this.setState({
+      time: t,
+    });
     if (this.props.onChange) this.props.onChange(null, t);
   },
 
@@ -182,6 +225,18 @@ const TimePicker = React.createClass({
     this.openDialog();
 
     if (this.props.onTouchTap) this.props.onTouchTap(e);
+  },
+
+  _isControlled() {
+    return this.props.hasOwnProperty('value');
+  },
+
+  _getControlledTime(props = this.props) {
+    let result = null;
+    if (DateTime.isDateObject(props.value)) {
+      result = props.value;
+    }
+    return result;
   },
 
   render() {
