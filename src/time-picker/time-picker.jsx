@@ -108,6 +108,17 @@ const TimePicker = React.createClass({
       muiTheme: this.context.muiTheme || getMuiTheme(),
     };
   },
+  
+  componentWillReceiveProps(nextProps, nextContext) {
+    const newState = this.state;
+    if (nextContext.muiTheme) {
+      newState.muiTheme = nextContext.muiTheme; 
+    }
+    if (!Date.isEqualTime(this.state.time, nextProps.defaultTime)) {
+      newState.time = nextProps.defaultTime;
+    }
+    this.setState(newState);
+  },
 
   windowListeners: {
     'keyup': '_handleWindowKeyUp',
