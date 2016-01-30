@@ -110,7 +110,7 @@ const TimePicker = React.createClass({
 
   getInitialState() {
     return {
-      time: this._isControlled() ? this.getControlledTime() : this.props.defaultTime,
+      time: this._isControlled() ? this._getControlledTime() : this.props.defaultTime,
       dialogTime: new Date(),
       muiTheme: this.context.muiTheme || getMuiTheme(),
     };
