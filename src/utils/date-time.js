@@ -171,4 +171,12 @@ export default {
     return ~~(this.monthDiff(d1, d2) / 12);
   },
 
+  isEqualTime(d1, d2) {
+    return d1 && d2 &&
+      (d1.getHours() === d2.getHours()) &&
+      (d1.getMinutes() === d2.getMinutes()) &&
+      (d1.getSeconds() === d2.getSeconds()) &&
+      (d1.getMilliseconds() === d2.getMilliseconds());
+  },
+
 };
