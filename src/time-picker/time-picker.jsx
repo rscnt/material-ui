@@ -1,4 +1,6 @@
 import React from 'react';
+import warning from 'warning';
+import DateTime from '../utils/date-time.js';
 import StylePropable from '../mixins/style-propable';
 import WindowListenable from '../mixins/window-listenable';
 import TimePickerDialog from './time-picker-dialog';
@@ -23,6 +25,10 @@ const TimePicker = React.createClass({
      * This is the initial time value of the component.
      */
     defaultTime: React.PropTypes.object,
+
+    /**    
+     */
+    value: React.PropTypes.object,
 
     /**
      * Tells the component to display the picker in
@@ -114,8 +120,11 @@ const TimePicker = React.createClass({
     if (nextContext.muiTheme) {
       newState.muiTheme = nextContext.muiTheme;
     }
-    if (!Date.isEqualTime(this.state.time, nextProps.defaultTime)) {
-      newState.time = nextProps.defaultTime;
+    if (this._isControlled()) {
+      let newTime = this._getControlledTime(nextProps);
+      if (!DateTime.isEqualTime(newTime, this.state.time)) {
+        newState.time = newTime;
+      }
     }
     this.setState(newState);
   },
@@ -154,11 +163,23 @@ const TimePicker = React.createClass({
     return hours + ':' + mins;
   },
 
+  /**
+   * Deprecated.
+   * returns timepicker value.
+   **/
   getTime() {
+    warning(false, `getTime() method is deprecated. Use the defaultTime property instead.
+      Or use the TimePicker as a controlled component with the value property.`);
     return this.state.time;
   },
 
+  /**
+   * Deprecated
+   * sets timepicker value.
+   **/
   setTime(time) {
+    warning(false, `setTime() method is deprecated. Use the defaultTime property instead.
+      Or use the TimePicker as a controlled component with the value property.`);
     this.setState({time: time ? time : emptyTime});
   },
 
@@ -171,14 +192,18 @@ const TimePicker = React.createClass({
 
   openDialog() {
     this.setState({
-      dialogTime: this.getTime(),
+      dialogTime: this.state.time,
     });
 
     this.refs.dialogWindow.show();
   },
 
   _handleDialogAccept(t) {
-    this.setTime(t);
+    if (this._isControlled()) {
+      this.setState({
+        time: t,
+      });
+    }
     if (this.props.onChange) this.props.onChange(null, t);
   },
 
@@ -193,6 +218,20 @@ const TimePicker = React.createClass({
     this.openDialog();
 
     if (this.props.onTouchTap) this.props.onTouchTap(e);
+  },
+
+  _isControlled() {
+    return this.props.hasOwnProperty('value') || this.props.hasOwnProperty('valueLink');
+  },
+
+  _getControlledTime(props = this.props) {
+    let result = null;
+    if (DateTime.isDateObject(props.value)) {
+      result = props.value;
+    } else {
+      warning(false, 'The value property passed to the TimePicker component has to be a Date object.');
+    }
+    return result;
   },
 
   render() {
