@@ -26,10 +26,6 @@ const TimePicker = React.createClass({
      */
     defaultTime: React.PropTypes.object,
 
-    /**    
-     */
-    value: React.PropTypes.object,
-
     /**
      * Tells the component to display the picker in
      * ampm (12hr) format or 24hr format.
@@ -86,6 +82,11 @@ const TimePicker = React.createClass({
     textFieldStyle: React.PropTypes.object,
 
     /**
+     * Sets the time for the Time Picker programmatically
+     */
+    value: React.PropTypes.object,
+
+    /**
      * Wordings used inside the button of the dialog.
      */
     wordings: React.PropTypes.object,
@@ -109,7 +110,7 @@ const TimePicker = React.createClass({
 
   getInitialState() {
     return {
-      time: this.props.defaultTime || emptyTime,
+      time: this._isControlled() ? this.getControlledTime() : this.props.defaultTime,
       dialogTime: new Date(),
       muiTheme: this.context.muiTheme || getMuiTheme(),
     };
@@ -229,7 +230,7 @@ const TimePicker = React.createClass({
     if (DateTime.isDateObject(props.value)) {
       result = props.value;
     } else {
-      warning(false, 'The value property passed to the TimePicker component has to be a Date object.');
+      warning(false, 'The value property passed to the TimePicker component needs to be a Date object.');
     }
     return result;
   },
