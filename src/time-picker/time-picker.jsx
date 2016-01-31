@@ -1,5 +1,4 @@
 import React from 'react';
-import warning from 'warning';
 import DateTime from '../utils/date-time.js';
 import StylePropable from '../mixins/style-propable';
 import WindowListenable from '../mixins/window-listenable';
@@ -192,19 +191,19 @@ const TimePicker = React.createClass({
   },
 
   openDialog() {
-    this.setState({
-      dialogTime: this.state.time,
-    });
+    if (this.state.time) {
+      this.setState({
+        dialogTime: this.state.time,
+      });
+    }
 
     this.refs.dialogWindow.show();
   },
 
   _handleDialogAccept(t) {
-    if (this._isControlled()) {
-      this.setState({
-        time: t,
-      });
-    }
+    this.setState({
+      time: t,
+    });
     if (this.props.onChange) this.props.onChange(null, t);
   },
 
@@ -229,8 +228,6 @@ const TimePicker = React.createClass({
     let result = null;
     if (DateTime.isDateObject(props.value)) {
       result = props.value;
-    } else {
-      warning(false, 'The value property passed to the TimePicker component needs to be a Date object.');
     }
     return result;
   },
