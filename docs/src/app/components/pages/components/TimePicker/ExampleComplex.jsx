@@ -10,11 +10,11 @@ export default class TimePickerExampleComplex extends React.Component {
 
   handleChangeTimePicker24 = (e, date) => {
     this.setState({value24: date});
-  }
+  };
 
   handleChangeTimePicker12 = (e, date) => {
     this.setState({value12: date});
-  }
+  };
 
   render() {
     return (

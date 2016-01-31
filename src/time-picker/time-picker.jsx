@@ -1,4 +1,5 @@
 import React from 'react';
+import warning from 'warning';
 import DateTime from '../utils/date-time.js';
 import StylePropable from '../mixins/style-propable';
 import WindowListenable from '../mixins/window-listenable';
@@ -172,7 +173,9 @@ const TimePicker = React.createClass({
    * returns timepicker value.
    **/
   getTime() {
-    warning(false, `getTime() method is deprecated. Use the defaultTime property instead. Or use the TimePicker as a controlled component with the value property.`);
+    warning(false, `getTime() method is deprecated. Use the defaultTime property
+    instead. Or use the TimePicker as a controlled component with the value
+    property.`);
     return this.state.time;
   },
 
@@ -181,7 +184,9 @@ const TimePicker = React.createClass({
    * sets timepicker value.
    **/
   setTime(time) {
-    warning(false, `setTime() method is deprecated. Use the defaultTime property instead. Or use the TimePicker as a controlled component with the value property.`);
+    warning(false, `setTime() method is deprecated. Use the defaultTime property
+    instead. Or use the TimePicker as a controlled component with the value
+    property.`);
     this.setState({time: time ? time : emptyTime});
   },
 
