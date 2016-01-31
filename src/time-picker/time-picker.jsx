@@ -82,7 +82,7 @@ const TimePicker = React.createClass({
     textFieldStyle: React.PropTypes.object,
 
     /**
-     * Sets the time for the Time Picker programmatically
+     * Sets the time for the Time Picker programmatically.
      */
     value: React.PropTypes.object,
 
@@ -222,7 +222,7 @@ const TimePicker = React.createClass({
   },
 
   _isControlled() {
-    return this.props.hasOwnProperty('value') || this.props.hasOwnProperty('valueLink');
+    return this.props.hasOwnProperty('value');
   },
 
   _getControlledTime(props = this.props) {
