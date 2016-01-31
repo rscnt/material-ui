@@ -134,34 +134,38 @@ const TimePicker = React.createClass({
     'keyup': '_handleWindowKeyUp',
   },
 
-  formatTime(date) {
-    let hours = date.getHours();
-    let mins = date.getMinutes().toString();
+  formatTime(date, format = 'ampm', pedantic = false) {
+    let result = '';
+    if (date) {
+      let hours = date.getHours();
+      let mins = date.getMinutes().toString();
 
-    if (this.props.format === 'ampm') {
-      let isAM = hours < 12;
-      hours = hours % 12;
-      let additional = isAM ? ' am' : ' pm';
-      hours = (hours || 12).toString();
+      if (format === 'ampm') {
+        let isAM = hours < 12;
+        hours = hours % 12;
+        let additional = isAM ? ' am' : ' pm';
+        hours = (hours || 12).toString();
 
-      if (mins.length < 2 ) mins = '0' + mins;
+        if (mins.length < 2 ) mins = '0' + mins;
 
-      if (this.props.pedantic) {
-        // Treat midday/midnight specially http://www.nist.gov/pml/div688/times.cfm
-        if (hours === '12' && mins === '00') {
-          return additional === ' pm' ? '12 noon' : '12 midnight';
+        if (pedantic) {
+          // Treat midday/midnight specially http://www.nist.gov/pml/div688/times.cfm
+          if (hours === '12' && mins === '00') {
+            return additional === ' pm' ? '12 noon' : '12 midnight';
+          }
         }
+
+        return hours + (mins === '00' ? '' : ':' + mins) + additional;
       }
 
-      return hours + (mins === '00' ? '' : ':' + mins) + additional;
+      hours = hours.toString();
+
+      if (hours.length < 2) hours = '0' + hours;
+      if (mins.length < 2) mins = '0' + mins;
+
+      result = hours + ':' + mins;
     }
-
-    hours = hours.toString();
-
-    if (hours.length < 2) hours = '0' + hours;
-    if (mins.length < 2) mins = '0' + mins;
-
-    return hours + ':' + mins;
+    return result;
   },
 
   /**
@@ -169,8 +173,6 @@ const TimePicker = React.createClass({
    * returns timepicker value.
    **/
   getTime() {
-    warning(false, `getTime() method is deprecated. Use the defaultTime property instead.
-      Or use the TimePicker as a controlled component with the value property.`);
     return this.state.time;
   },
 
@@ -179,8 +181,6 @@ const TimePicker = React.createClass({
    * sets timepicker value.
    **/
   setTime(time) {
-    warning(false, `setTime() method is deprecated. Use the defaultTime property instead.
-      Or use the TimePicker as a controlled component with the value property.`);
     this.setState({time: time ? time : emptyTime});
   },
 
