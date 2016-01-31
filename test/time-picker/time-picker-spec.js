@@ -29,7 +29,6 @@ describe('TimePicker', () => {
 
   it('takes defaulTime prop to set first value when value prop is missing', () => {
     let initialTime = new Date(1448967059892); // Tue, 01 Dec 2015 10:50:59 GMT
-    let valueTime = null;
 
     let render = TestUtils.renderIntoDocument(
       <ThemeTimePicker format="ampm" locale="en-US"
