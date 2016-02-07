@@ -157,6 +157,7 @@ export default {
    * @return String A string representing the formatted time.
    */
   formatTime(date, format = 'ampm', pedantic = false) {
+    if (!date) return '';
     let hours = date.getHours();
     let mins = date.getMinutes().toString();
 
