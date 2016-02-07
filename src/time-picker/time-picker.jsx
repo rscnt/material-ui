@@ -198,12 +198,9 @@ const TimePicker = React.createClass({
   },
 
   openDialog() {
-    if (this.state.time) {
-      this.setState({
-        dialogTime: this.state.time,
-      });
-    }
-
+    this.setState({
+      dialogTime: this.state.time,
+    });
     this.refs.dialogWindow.show();
   },
 
