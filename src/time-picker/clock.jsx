@@ -37,10 +37,9 @@ const Clock = React.createClass({
   },
 
   componentWillReceiveProps(nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
     this.setState({
-      muiTheme: newMuiTheme,
-      selectedTime: nextProps.initialTime,
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+      selectedTime: nextProps.initialTime || new Date(),
     });
   },
 
